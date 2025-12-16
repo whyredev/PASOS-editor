@@ -1,0 +1,56 @@
+{
+    "duration": 5.0,
+    "timeline": [
+        [
+            [
+                0,
+                0.1,
+                "smooth",
+                "L: [-3,0,0]"
+            ],
+            [
+                3,
+                1,
+                "smooth",
+                "L: [3,3,0]"
+            ]
+        ],
+        [],
+        [],
+        [],
+        [
+            [
+                1,
+                1,
+                "smooth",
+                "C: RegularPolygon(6, fill_opacity=0.1).set_color(['#FC6255', '#FFFF00'])"
+            ]
+        ],
+        [
+            [
+                0,
+                0.1,
+                "smooth",
+                "L: [3,0,0]"
+            ],
+            [
+                3,
+                1,
+                "smooth",
+                "L: [-3,3,0]"
+            ]
+        ],
+        [],
+        [],
+        [],
+        [
+            [
+                1,
+                1,
+                "smooth",
+                "C: RegularPolygon(5, fill_opacity=0.1, color='#0080ff')"
+            ]
+        ]
+    ],
+    "invisible_objects": []
+}

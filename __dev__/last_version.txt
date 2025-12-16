@@ -1,0 +1,330 @@
+import sys
+import threading
+import pygame
+import numpy as np
+from manim import *
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QGridLayout, QGroupBox, QLabel, QLineEdit, QTextEdit, QSlider, QPushButton, QStyle, QSizePolicy
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QCloseEvent
+
+def get_animation_frame(anim, alpha: float):
+    anim.begin()
+    anim.interpolate(alpha)
+    partial = anim.mobject.copy()
+    anim.finish()  # reset
+    return partial
+
+def evaluate_formula(f, init_value, alpha):
+    if f[:3] == "E: ":
+        return eval("lambda t: " + f[3:])(alpha)
+    elif alpha == 1:
+        return eval(f[3:])
+    if f[:3] == "L: ":
+        end_value = eval(f[3:])
+        if isinstance(end_value, list):
+            end_value = np.array(end_value)
+        return init_value + (end_value - init_value) * alpha
+    if f[:3] == "G: ":
+        end_value = eval(f[3:])
+        return init_value * (end_value/init_value)**alpha
+    if f[:3] == "C: ":
+        end_value = eval(f[3:])
+        if init_value == VMobject():
+            return get_animation_frame(Create(end_value.copy(), rate_func=linear), alpha)
+        if end_value == VMobject():
+            return get_animation_frame(Uncreate(init_value.copy(), rate_func=linear), alpha)
+        return VGroup(get_animation_frame(Create(end_value.copy(), rate_func=linear), alpha), get_animation_frame(Uncreate(init_value.copy(), rate_func=linear), alpha))
+    if f[:3] == "W: ":
+        end_value = eval(f[3:])
+        if init_value == VMobject():
+            return get_animation_frame(Write(end_value.copy(), rate_func=linear), alpha)
+        if end_value == VMobject():
+            return get_animation_frame(Unwrite(init_value.copy(), rate_func=linear), alpha)
+        return VGroup(get_animation_frame(Write(end_value.copy(), rate_func=linear), alpha), get_animation_frame(Unwrite(init_value.copy(), rate_func=linear), alpha))
+    if f[:3] == "T: ":
+        end_value = eval(f[3:])
+        return get_animation_frame(Transform(init_value.copy(), end_value.copy(), rate_func=linear), alpha)
+    if f[:3] == "S: ":
+        end_value = eval(f[3:])
+        return VGroup(*[get_animation_frame(Transform(submob, end_value.copy(), rate_func=linear), alpha) for submob in init_value.copy()])
+
+class always_update_mobs(Animation):
+    def __init__(self, scene, update=0, **kwargs):
+        self.scene = scene
+        self.update = update #this exists because otherwise i could make changes in the animation and Manim would just ignore them and render using cached data
+        super().__init__(self.scene.objects, **kwargs)
+
+    def interpolate(self, time_over_duration):
+        for i in self.scene.invisible_objects:
+            self.scene.remove(self.scene.objects[i])
+        self.scene.update_mobs()
+
+class PASOS(MovingCameraScene):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.render_mode = True
+        self.edtv = {} #editor variables
+        
+    def construct(self):
+        self.duration = 6
+        self.timeline = [[[3, 1, "smooth", "L: [1,1,0]"], [5, 1, "smooth", "L: [3,1,0]"]],[[5, 1, "smooth", "L: PI/4"]],[[5, 1, "smooth", "G: 1.5"]],[],[[1, 1, "smooth", "C: Square(fill_opacity=0.1)"], [3, 1, "smooth", "T: Square(color=BLUE, fill_opacity=0.1)"], [5, 1, "smooth", "T: Square(color=PURPLE, fill_opacity=0.1)"]]]
+        self.invisible_objects = []
+        
+        self.objects = Group(*[VMobject() for _ in range(len(self.timeline)//5)])
+        for i in self.objects:
+            if not i in self.invisible_objects:
+                self.add(i)
+        
+        self.mob_data = [{"position": ORIGIN, "angle": 0, "scale": 1, "opacity": 1, "sprite": VMobject()} for _ in self.objects]
+        self.current_indexes = [0] * 5 * len(self.mob_data)
+        self.into_event = [False] * 5 * len(self.mob_data)
+        self.init_values = sum([[ORIGIN, 0, 1, 1, VMobject()] for _ in self.mob_data], [])
+        if self.render_mode:
+            self.play(always_update_mobs(self, 2), run_time=self.duration)
+
+    def update_mobs(self):
+        for i in range(len(self.timeline)):
+            last_index = len(self.timeline[i])-1
+            time = self.time if self.render_mode else self.edtv["time"]
+
+            idx = 0
+            while idx < last_index and time >= self.timeline[i][idx][0] + self.timeline[i][idx][1]:
+                idx += 1
+            
+            if self.current_indexes[i] != idx:
+                self.current_indexes[i] = idx
+                if idx == 0:
+                    self.init_values[i] = [ORIGIN,0,1,1,VMobject()][i%5]
+                else:
+                    self.init_values[i] = evaluate_formula(self.timeline[i][idx-1][3], self.init_values[i], 1)
+                self.into_event[i] = True
+
+            if self.timeline[i]:
+                current_event = self.timeline[i][idx]
+                if time > current_event[0]:
+                    self.into_event[i] = True
+                    self.mob_data[i//5][["position", "angle", "scale", "opacity", "sprite"][i%5]] = evaluate_formula(current_event[3], self.init_values[i], eval(current_event[2])((time-current_event[0])/current_event[1]))
+                elif self.into_event[i]:
+                    self.into_event[i] = False
+                    self.mob_data[i//5][["position", "angle", "scale", "opacity", "sprite"][i%5]] = self.init_values[i]
+        
+        for mob in range(len(self.objects)):
+            thismob_data = self.mob_data[mob]
+            self.objects[mob].become(thismob_data["sprite"]).shift(thismob_data["position"]).rotate(thismob_data["angle"]).scale(thismob_data["scale"]).fade(1-thismob_data["opacity"])
+
+def run_preview_window(scene):
+    scene.render_mode = False
+    scene.construct()
+    scene.edtv = {"function_call": [], "time": 0, "playing_speed": 1, "scroll_speed": 0.1, "playing": False}
+
+    pygame.init()
+    manim_resolution = (128/9, 8)
+    window_resolution = (853, 480)
+    window = pygame.display.set_mode(window_resolution)
+    pygame.display.set_caption("Preview")
+
+    play_tick_start = 0
+    play_time_start = 0
+    editor_window = None
+        
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                break
+            #if event.type == pygame.MOUSEBUTTONDOWN:
+            #    dragging = True
+            #if event.type == pygame.MOUSEBUTTONUP:
+            #    dragging = False
+
+        if not running:
+            break
+
+        if "update_pygame_editor_window_variable" in scene.edtv["function_call"]:
+            editor_window = scene.edtv["function_call"][-2]
+            scene.edtv["function_call"].pop(-1)
+            scene.edtv["function_call"].pop(-1)
+        
+        if "start_playing" in scene.edtv["function_call"]:
+            play_tick_start = pygame.time.get_ticks()
+            play_time_start = scene.edtv["time"]
+            scene.edtv["function_call"].pop(-1)
+        if scene.edtv["playing"]:
+            editor_window.set_time_to(play_time_start + (pygame.time.get_ticks() - play_tick_start)/1000 * scene.edtv["playing_speed"])
+            if scene.edtv["time"] > scene.duration:
+                editor_window.set_time_to(scene.duration)
+                editor_window.pbtn_play.setIcon(editor_window.style().standardIcon(QStyle.SP_MediaPlay))
+                scene.edtv["playing"] = False
+        
+        if "quit" in scene.edtv["function_call"]:
+            running = False
+            sys.exit(0)
+            break
+        
+        scene.update_mobs()
+        scene.renderer.update_frame(scene)
+        frame = scene.renderer.get_frame()
+        surf = pygame.transform.flip(pygame.transform.scale(pygame.surfarray.make_surface(np.rot90(frame[:, :, :3], -1)), window_resolution), False, True)
+        window.blit(surf, (0, 0))
+        pygame.display.flip()
+
+    pygame.quit()
+
+class ControlWindow(QMainWindow):
+    def __init__(self, scene):
+        super().__init__()
+        self.scene = scene
+        self.scene.edtv["editor_window_object"] = self
+        self.scene.edtv["function_call"].append(self)
+        self.scene.edtv["function_call"].append("update_pygame_editor_window_variable")
+        self.setWindowTitle("Editor")
+        self.resize(640, 480)
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        
+        layout1 = QVBoxLayout()
+        layout2 = QHBoxLayout()
+        
+        central_widget.setLayout(layout1)
+
+        self.updating_time_slider = False
+        
+        self.time_edit = QSlider(Qt.Orientation.Horizontal)
+        self.time_edit.valueChanged.connect(self.time_slider_moved)
+        layout1.addWidget(self.time_edit)
+        layout1.addLayout(layout2)
+
+        duration_label = QLabel("Duration (seconds):")
+        duration_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        duration_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        duration_edit = QLineEdit()
+        duration_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        duration_edit.setMinimumWidth(0)
+        duration_edit.setText(str(self.scene.duration))
+        duration_edit.textChanged.connect(self.duration_changed)
+        layout2.addWidget(duration_label)
+        layout2.addWidget(duration_edit)
+
+        pbtn_back = QPushButton()
+        pbtn_back.setIcon(self.style().standardIcon(QStyle.SP_MediaSeekBackward))
+        pbtn_back.clicked.connect(lambda: self.set_time_to(max(self.scene.edtv["time"] - self.scene.edtv["scroll_speed"], 0)))
+        self.pbtn_play = QPushButton()
+        self.pbtn_play.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+        self.pbtn_play.clicked.connect(self.playing_toggle)
+        pbtn_forward = QPushButton()
+        pbtn_forward.setIcon(self.style().standardIcon(QStyle.SP_MediaSeekForward))
+        pbtn_forward.clicked.connect(lambda: self.set_time_to(min(self.scene.edtv["time"] + self.scene.edtv["scroll_speed"], self.scene.duration)))
+        layout2.addWidget(pbtn_back)
+        layout2.addWidget(self.pbtn_play)
+        layout2.addWidget(pbtn_forward)
+
+        playing_speed_label = QLabel("Playing speed:")
+        playing_speed_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        playing_speed_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        playing_speed_edit = QLineEdit()
+        playing_speed_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        playing_speed_edit.setMinimumWidth(0)
+        playing_speed_edit.setText(str(self.scene.edtv["playing_speed"]))
+        playing_speed_edit.textChanged.connect(lambda x: self.float_var_changed("playing_speed", x))
+        scroll_speed_label = QLabel("Scroll speed:")
+        scroll_speed_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        scroll_speed_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        scroll_speed_edit = QLineEdit()
+        scroll_speed_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        scroll_speed_edit.setMinimumWidth(0)
+        scroll_speed_edit.setText(str(self.scene.edtv["scroll_speed"]))
+        scroll_speed_edit.textChanged.connect(lambda x: self.float_var_changed("scroll_speed", x))
+        layout2.addWidget(playing_speed_label)
+        layout2.addWidget(playing_speed_edit)
+        layout2.addWidget(scroll_speed_label)
+        layout2.addWidget(scroll_speed_edit)
+
+        self.time_displayer = QLabel("Time: 0.00s")
+        self.time_displayer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.time_displayer.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        layout2.addWidget(self.time_displayer)
+
+        self.timeline_edit = QTextEdit()
+        self.timeline_edit.setText(str(self.scene.timeline))
+        self.timeline_edit.textChanged.connect(self.timeline_changed)
+        layout1.addWidget(self.timeline_edit)
+        
+        event_editor_box = QGroupBox("Event editor")
+        temp = QHBoxLayout()
+        event_editor_box.setLayout(temp)
+        temp.addWidget(QTextEdit())
+        layout1.addWidget(event_editor_box)
+
+        layout1.setStretch(0, 1)
+        layout1.setStretch(1, 1)
+        layout1.setStretch(2, 4)
+        layout1.setStretch(2, 6)
+        layout2.setStretch(0, 8)
+        layout2.setStretch(1, 3)
+        layout2.setStretch(2, 2)
+        layout2.setStretch(3, 2)
+        layout2.setStretch(4, 2)
+        layout2.setStretch(5, 6)
+        layout2.setStretch(6, 2)
+        layout2.setStretch(7, 6)
+        layout2.setStretch(8, 3)
+        layout2.setStretch(9, 9)
+
+    def set_time_to(self, t):
+        self.scene.edtv["time"] = t
+        self.updating_time_slider = True
+        self.time_edit.setValue(int(100 * self.scene.edtv["time"] / self.scene.duration))
+        self.time_displayer.setText(f'Time: {self.scene.edtv["time"]:.2f}s')
+    def time_slider_moved(self, value):
+        if self.updating_time_slider:
+            self.updating_time_slider = False
+        else:
+            self.set_time_to(self.scene.duration * value / 100)
+
+    def float_var_changed(self, variable, value, interval="positive"):
+        try:
+            new_value = float(value)
+            if interval != "positive" or new_value > 0:
+                self.scene.edtv[variable] = new_value
+        except Exception as e:
+            print(e)
+    
+    def duration_changed(self, value):
+        try:
+            new_duration = float(value)
+            if new_duration > 0:
+                self.scene.duration = new_duration
+                self.set_time_to(min(self.scene.edtv["time"], new_duration))
+        except Exception as e:
+            print(e)
+
+    def playing_toggle(self):
+        if self.scene.edtv["playing"]:
+            self.scene.edtv["playing"] = False
+            self.pbtn_play.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+        else:
+            self.scene.edtv["playing"] = True
+            self.pbtn_play.setIcon(self.style().standardIcon(QStyle.SP_MediaStop))
+            self.scene.edtv["function_call"].append("start_playing")
+
+    def timeline_changed(self):
+        value = self.timeline_edit.toPlainText()
+        if not "@" in value:
+            self.scene.timeline = eval(value)
+    
+    def closeEvent(self, event):
+        self.scene.edtv["function_call"].append("quit")
+        event.accept()
+
+preview = PASOS()
+if __name__ == "__main__":
+    # Start Pygame
+    t = threading.Thread(target=run_preview_window, args=[preview], daemon=True)
+    t.start()
+
+    # Start PyQt
+    app = QApplication(sys.argv)
+    ctrl = ControlWindow(preview)
+    ctrl.show()
+    sys.exit(app.exec_())

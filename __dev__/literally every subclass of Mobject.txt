@@ -1,0 +1,152 @@
+	<class 'manim.mobject.vector_field.ArrowVectorField'>
+	<class 'manim.mobject.geometry.labeled.LabeledArrow'>
+	<class 'manim.mobject.frame.ScreenRectangle'>
+	<class 'manim.mobject.svg.svg_mobject.SVGMobject'>
+	<class 'manim.mobject.geometry.line.Vector'>
+	<class 'manim.mobject.graphing.functions.FunctionGraph'>
+	<class 'manim.mobject.table.MobjectTable'>
+	<class 'manim.mobject.types.vectorized_mobject.VectorizedPoint'>
+	<class 'manim.mobject.vector_field.StreamLines'>
+	<class 'manim.mobject.geometry.arc.ArcBetweenPoints'>
+	<class 'manim.mobject.geometry.line.TangentLine'>
+	<class 'manim.mobject.graphing.number_line.UnitInterval'>
+	<class 'manim.mobject.three_d.three_dimensions.Torus'>
+	<class 'manim.mobject.geometry.polygram.Star'>
+<class 'manim.mobject.geometry.boolean_ops.Difference'>
+<class 'manim.mobject.geometry.arc.AnnotationDot'>
+<class 'manim.mobject.geometry.tips.ArrowTip'>
+<class 'manim.mobject.three_d.three_dimensions.Sphere'>
+<class 'manim.mobject.three_d.three_dimensions.Cone'>
+<class 'manim.mobject.geometry.arc.Dot'>
+<class 'manim.mobject.geometry.arc.CubicBezier'>
+<class 'manim.mobject.three_d.three_dimensions.Surface'>
+<class 'manim.animation.changing.AnimatedBoundary'>
+<class 'manim.mobject.geometry.shape_matchers.Underline'>
+<class 'manim.mobject.svg.brace.BraceBetweenPoints'>
+<class 'manim.mobject.graphing.coordinate_systems.Axes'>
+<class 'manim.mobject.frame.FullScreenRectangle'>
+<class 'manim.mobject.text.tex_mobject.BulletedList'>
+<class 'manim.mobject.geometry.polygram.Polygon'>
+<class 'manim.mobject.graphing.functions.ImplicitFunction'>
+<class 'manim.mobject.graphing.coordinate_systems.NumberPlane'>
+<class 'manim.mobject.types.vectorized_mobject.CurvesAsSubmobjects'>
+<class 'manim.mobject.geometry.line.DoubleArrow'>
+<class 'manim.mobject.text.tex_mobject.Title'>
+<class 'manim.mobject.three_d.polyhedra.Tetrahedron'>
+<class 'manim.mobject.matrix.MobjectMatrix'>
+<class 'manim.mobject.geometry.arc.CurvedArrow'>
+<class 'manim.mobject.graphing.functions.ParametricFunction'>
+<class 'manim.mobject.three_d.three_dimensions.ThreeDVMobject'>
+<class 'manim.mobject.geometry.shape_matchers.Cross'>
+<class 'manim.mobject.geometry.tips.ArrowTriangleTip'>
+<class 'manim.mobject.text.code_mobject.Code'>
+<class 'manim.mobject.geometry.polygram.RoundedRectangle'>
+	<class 'manim.mobject.geometry.arc.LabeledDot'>
+<class 'manim.mobject.geometry.polygram.RegularPolygon'>
+<class 'manim.mobject.graphing.coordinate_systems.ComplexPlane'>
+<class 'manim.mobject.geometry.boolean_ops._BooleanOps'>
+<class 'manim.mobject.geometry.polygram.Polygram'>
+<class 'manim.mobject.geometry.arc.AnnularSector'>
+<class 'manim.mobject.geometry.polygram.ConvexHull'>
+<class 'manim.mobject.graphing.probability.BarChart'>
+<class 'manim.mobject.svg.brace.ArcBrace'>
+<class 'manim.mobject.three_d.polyhedra.Octahedron'>
+<class 'manim.mobject.text.numbers.DecimalNumber'>
+<class 'manim.mobject.graph.Graph'>
+<class 'manim.mobject.svg.svg_mobject.VMobjectFromSVGPath'>
+<class 'manim.mobject.geometry.arc.Circle'>
+<class 'manim.mobject.geometry.tips.ArrowSquareTip'>
+<class 'manim.mobject.graphing.probability.SampleSpace'>
+<class 'manim.mobject.geometry.tips.StealthTip'>
+<class 'manim.animation.changing.TracedPath'>
+<class 'manim.mobject.svg.brace.Brace'>
+	<class 'manim.mobject.geometry.boolean_ops.Union'>
+<class 'manim.mobject.graph.GenericGraph'>
+<class 'manim.mobject.geometry.shape_matchers.SurroundingRectangle'>
+<class 'manim.mobject.three_d.three_dimensions.Line3D'>
+<class 'manim.mobject.geometry.shape_matchers.BackgroundRectangle'>
+<class 'manim.mobject.text.tex_mobject.SingleStringMathTex'>
+<class 'manim.mobject.vector_field.VectorField'>
+<class 'manim.mobject.three_d.polyhedra.Icosahedron'>
+<class 'manim.mobject.matrix.DecimalMatrix'>
+<class 'manim.mobject.geometry.arc.Ellipse'>
+<class 'manim.mobject.geometry.line.Elbow'>
+<class 'manim.mobject.three_d.three_dimensions.Arrow3D'>
+<class 'manim.mobject.table.Table'>
+	<class 'manim.mobject.types.vectorized_mobject.VGroup'>
+<class 'manim.mobject.geometry.polygram.RegularPolygram'>
+<class 'manim.mobject.geometry.labeled.Label'>
+<class 'manim.mobject.geometry.arc.ArcPolygon'>
+<class 'manim.mobject.geometry.arc.CurvedDoubleArrow'>
+<class 'manim.mobject.three_d.three_dimensions.Dot3D'>
+<class 'manim.mobject.table.MathTable'>
+<class 'manim.mobject.geometry.tips.ArrowCircleTip'>
+<class 'manim.mobject.geometry.boolean_ops.Exclusion'>
+<class 'manim.mobject.geometry.arc.Sector'>
+<class 'manim.mobject.geometry.tips.ArrowTriangleFilledTip'>
+<class 'manim.mobject.table.IntegerTable'>
+<class 'manim.mobject.matrix.Matrix'>
+<class 'manim.mobject.geometry.polygram.Rectangle'>
+<class 'manim.mobject.three_d.polyhedra.Dodecahedron'>
+<class 'manim.mobject.text.numbers.Integer'>
+<class 'manim.mobject.geometry.arc.TipableVMobject'>
+<class 'manim.mobject.geometry.arc.ArcPolygonFromArcs'>
+<class 'manim.mobject.three_d.three_dimensions.Cube'>
+<class 'manim.mobject.geometry.tips.ArrowCircleFilledTip'>
+<class 'manim.mobject.text.tex_mobject.MathTex'>
+<class 'manim.mobject.svg.brace.BraceText'>
+<class 'manim.mobject.text.text_mobject.Text'>
+<class 'manim.mobject.geometry.polygram.Square'>
+<class 'manim.mobject.geometry.line.Angle'>
+<class 'manim.mobject.graph.DiGraph'>
+<class 'manim.mobject.table.DecimalTable'>
+<class 'manim.mobject.three_d.polyhedra.ConvexHull3D'>
+<class 'manim.mobject.geometry.polygram.Triangle'>
+<class 'manim.mobject.geometry.line.Arrow'>
+<class 'manim.mobject.three_d.three_dimensions.Cylinder'>
+<class 'manim.mobject.logo.ManimBanner'>
+<class 'manim.mobject.text.numbers.Variable'>
+<class 'manim.mobject.three_d.polyhedra.Polyhedron'>
+	<class 'manim.mobject.geometry.labeled.LabeledPolygram'>
+<class 'manim.mobject.text.tex_mobject.Tex'>
+<class 'manim.mobject.geometry.arc.Arc'>
+<class 'manim.mobject.geometry.tips.ArrowSquareFilledTip'>
+<class 'manim.mobject.graphing.number_line.NumberLine'>
+<class 'manim.mobject.types.vectorized_mobject.DashedVMobject'>
+	<class 'manim.mobject.graphing.coordinate_systems.ThreeDAxes'>
+<class 'manim.mobject.text.text_mobject.Paragraph'>
+<class 'manim.mobject.geometry.labeled.LabeledLine'>
+<class 'manim.mobject.geometry.arc.Annulus'>
+<class 'manim.mobject.geometry.line.DashedLine'>
+<class 'manim.mobject.graphing.coordinate_systems.PolarPlane'>
+<class 'manim.mobject.matrix.IntegerMatrix'>
+<class 'manim.mobject.geometry.arc.TangentialArc'>
+<class 'manim.mobject.geometry.line.Line'>
+<class 'manim.mobject.svg.brace.BraceLabel'>
+<class 'manim.mobject.types.vectorized_mobject.VDict'>
+<class 'manim.mobject.three_d.three_dimensions.Prism'>
+<class 'manim.mobject.text.text_mobject.MarkupText'>
+<class 'manim.mobject.geometry.boolean_ops.Intersection'>
+<class 'manim.mobject.geometry.polygram.Cutout'>
+<class 'manim.mobject.geometry.line.RightAngle'>
+
+ORDER BY MOST SIMPLE/USED TO MOST COMPLEX/UNUSED:
+
+"Arc between points"
+"Tangent line"
+"Star"
+"Unit interval"
+"Function graph"
+"Vector"
+"Vector field"
+"Stream lines"
+"Mobject table"
+"Labeled dot"
+"Labeled polygram"
+"Labeled arrow"
+"Torus"
+"3D axes"
+"SVGMobject"
+"Union"
+"Difference"
+"VGroup"
