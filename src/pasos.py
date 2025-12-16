@@ -86,14 +86,15 @@ class always_update_mobs(Animation):
 class PASOS(MovingCameraScene):
     empty_mobject = EmptyVMobject()
     edtv = {} # editor variables, this is shared between pygame, pyqt's main window and its widgets
-    duration = 1
-    timeline = []
-    invisible_objects = []
 
     def __init__(self, render_mode: bool, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.nv = create_node_visitor(self)
         self.render_mode = render_mode
+
+        self.duration = 1 # i have to create the duration variable here cuz Scene already has a duration variable lol
+        self.timeline = []
+        self.invisible_objects = []
         
     def construct(self):
         self.update_visible_mobs()
