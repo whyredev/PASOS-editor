@@ -1,3 +1,6 @@
+# THIS IS AN OLD VERSION OF THE PROGRAM THAT WAS UPDATED FOR THE LAST TIME
+# IN 5TH DECEMBER 2025
+
 import sys
 import threading
 import pygame
