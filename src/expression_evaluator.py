@@ -2,6 +2,8 @@ import manim
 import numpy as np
 import ast
 
+class EmptyVMobject(VMobject): pass
+
 NAMES = {
     "UP": manim.UP,
     "DOWN": manim.DOWN,

@@ -1,6 +1,6 @@
 from manim import *
 import numpy as np
-from .expression_evaluator import create_node_visitor, pasos_eval
+from .expression_evaluator import create_node_visitor, pasos_eval, EmptyVMobject
 
 def get_angle_between_mobs(A: Mobject, B: Mobject) -> float:
     if not (len(A.get_all_points()) and len(B.get_all_points())):
@@ -68,8 +68,6 @@ def evaluate_formula(f: str, init_value, alpha: float, node_visitor):
     if f[:3] == "S: ": # S stands for "Submobject transformation" (btw i'm not sure if i'll keep this as a default prefix)
         end_value = pasos_eval(f[3:], node_visitor)
         return VGroup(*[get_animation_frame(Transform(submob, end_value, rate_func=linear), alpha) for submob in init_value.copy()])
-
-class EmptyVMobject(VMobject): pass
 
 # this animation is basically what makes PASOS work in render_mode, it calls update_mobs() at every frame
 class always_update_mobs(Animation):
