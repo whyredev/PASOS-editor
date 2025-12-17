@@ -56,6 +56,7 @@ NAMES = {
     "atanh": np.atanh,
     "array": np.array,
     "norm": np.linalg.norm,
+    "EmptyVMobject": EmptyVMobject
 }
 
 def get_all_subclasses(cls):

@@ -30,4 +30,10 @@ class Logo(Scene):
 
 class Testing(Scene):
     def construct(self):
-        self.add(AnnotationDot())
+        line1 = DashedLine(start=3 * LEFT, end=3 * RIGHT)
+        line1.rotate(angle=31 * DEGREES, about_point=ORIGIN)
+        line2 = DashedLine(start=3 * UP, end=3 * DOWN)
+        line2.rotate(angle=12 * DEGREES, about_point=ORIGIN)
+
+        arc = TangentialArc(line1, line2, radius=2.25, corner=(1, 1), color=TEAL)
+        self.add(arc, line1, line2)
