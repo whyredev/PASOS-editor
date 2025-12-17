@@ -2,7 +2,7 @@ import manim
 import numpy as np
 import ast
 
-class EmptyVMobject(VMobject): pass
+class EmptyVMobject(manim.VMobject): pass
 
 NAMES = {
     "UP": manim.UP,
