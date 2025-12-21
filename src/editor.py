@@ -132,6 +132,7 @@ def create_event_edit(window, layout1):
     """)
     window.event_editor_widget = EventEditor()
     window.event_editor_widget.open_event(None)
+    window.timeline_canvas.edit_event.connect(window.event_editor_widget.open_event)
     temp = QVBoxLayout()
     temp.addWidget(window.event_editor_widget)
     event_editor_box.setLayout(temp)

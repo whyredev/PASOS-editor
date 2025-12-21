@@ -1,4 +1,3 @@
-from typing import Any
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPainter, QFontMetrics, QPalette, QColor
 from PyQt5.QtCore import Qt, pyqtSignal, QRect
@@ -18,7 +17,7 @@ def qcolor_interpolation(color1: QColor, color2: QColor, alpha: float) -> QColor
     return QColor(new_r, new_g, new_b, new_a)
 
 class TimeLineCanvas(QWidget):
-    edit_event = pyqtSignal(Any)
+    edit_event = pyqtSignal(object)
     timeline_changed = pyqtSignal()
     sec_width = 60 # width of a second
     row_height = 20
