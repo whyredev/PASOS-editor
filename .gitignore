@@ -5,6 +5,7 @@ src/__pycache__/
 *.pyc
 *.py[codz]
 *$py.class
+.venv
 
 # C extensions
 *.so
