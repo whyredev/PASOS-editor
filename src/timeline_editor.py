@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QPainter, QFontMetrics, QPalette, QColor
-from PyQt5.QtCore import Qt, pyqtSignal, QRect
+from PyQt6.QtWidgets import QWidget
+from PyQt6.QtGui import QPainter, QFontMetrics, QPalette, QColor
+from PyQt6.QtCore import Qt, pyqtSignal, QRect
 
 def qcolor_interpolation(color1: QColor, color2: QColor, alpha: float) -> QColor:
     if alpha < 0 or alpha > 1:
@@ -43,16 +43,16 @@ class TimeLineCanvas(QWidget):
         self.update_size()
 
         palette = self.style().standardPalette() # get the OS palette
-        self.bg_color = qcolor_interpolation(palette.color(QPalette.Button), palette.color(QPalette.Dark), 0.75)
-        self.row_fill = palette.color(QPalette.Button)
-        self.grid_color = qcolor_interpolation(palette.color(QPalette.Button), palette.color(QPalette.Dark), 0.5)
-        self.row_label_border = qcolor_interpolation(palette.color(QPalette.Dark), palette.color(QPalette.Text), 0.25)
-        self.row_label_fill = qcolor_interpolation(palette.color(QPalette.Button), palette.color(QPalette.Dark), 0.25)
+        self.bg_color = qcolor_interpolation(palette.color(QPalette.ColorRole.Button), palette.color(QPalette.ColorRole.Dark), 0.75)
+        self.row_fill = palette.color(QPalette.ColorRole.Button)
+        self.grid_color = qcolor_interpolation(palette.color(QPalette.ColorRole.Button), palette.color(QPalette.ColorRole.Dark), 0.5)
+        self.row_label_border = qcolor_interpolation(palette.color(QPalette.ColorRole.Dark), palette.color(QPalette.ColorRole.Text), 0.25)
+        self.row_label_fill = qcolor_interpolation(palette.color(QPalette.ColorRole.Button), palette.color(QPalette.ColorRole.Dark), 0.25)
         self.event_border = qcolor_interpolation(QColor("#000000"), QColor("#FC6255"), 0.75)
-        self.event_fill = qcolor_interpolation(palette.color(QPalette.Button), QColor("#FC6255"), 0.5)
+        self.event_fill = qcolor_interpolation(palette.color(QPalette.ColorRole.Button), QColor("#FC6255"), 0.5)
         self.selected_event_border = qcolor_interpolation(QColor("#000000"), QColor("#FFFF00"), 0.75)
-        self.selected_event_fill = qcolor_interpolation(palette.color(QPalette.Button), QColor("#FFFF00"), 0.5)
-        self.cursor_color = palette.color(QPalette.Text)
+        self.selected_event_fill = qcolor_interpolation(palette.color(QPalette.ColorRole.Button), QColor("#FFFF00"), 0.5)
+        self.cursor_color = palette.color(QPalette.ColorRole.Text)
     
     def update_size(self):
         self.n_of_rows = len(self.scene.timeline) + 5 # how many rows will be displayed
@@ -89,8 +89,8 @@ class TimeLineCanvas(QWidget):
             painter.drawRect(0, row * self.row_height, 100, self.row_height)
             painter.drawText(
                 QRect(5, row * self.row_height, 90, self.row_height),
-                Qt.AlignLeft | Qt.AlignVCenter,
-                QFontMetrics(font).elidedText(rect_text, Qt.ElideRight, 90)
+                Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
+                QFontMetrics(font).elidedText(rect_text, Qt.TextElideMode.ElideRight, 90)
                 )
         
         # draw events
@@ -119,7 +119,7 @@ class TimeLineCanvas(QWidget):
         painter.end()
 
     def mouseMoveEvent(self, event):
-        mouse_time = (event.x() - 100) / self.sec_width
+        mouse_time = (event.position().x() - 100) / self.sec_width
         
         if self.resizing_flag:
             if self.resizing_side == "left":
@@ -139,7 +139,7 @@ class TimeLineCanvas(QWidget):
                 self.timeline_changed.emit()
                 self.update()
 
-        if self.hovered_row_idx != (new_row_idx := event.y() // self.row_height):
+        if self.hovered_row_idx != (new_row_idx := event.position().y() // self.row_height):
             self.hovered_row_idx = new_row_idx
             self.hovered_row = None
             self.hovered_event = None
@@ -151,7 +151,7 @@ class TimeLineCanvas(QWidget):
         if mouse_time < self.scene.duration and self.hovered_row and not (self.hovered_event and self.hovered_event[0] < mouse_time < self.hovered_event[0] + self.hovered_event[1]):
             self.hovered_event_idx, self.hovered_event = next(((i,e) for i, e in enumerate(self.hovered_row) if e[0] < mouse_time < e[0] + e[1]), (0, None))
 
-        self.setCursor(Qt.ArrowCursor)
+        self.setCursor(Qt.CursorShape.ArrowCursor)
         self.resizing_side = None
         if not self.hovered_event:
             return
@@ -178,18 +178,19 @@ class TimeLineCanvas(QWidget):
         if self.resizing_side:
             self.resizing_flag = True
             return
+        
+        self.selected_events.clear()
+        self.selected_events_mapping.clear()
         if self.hovered_event:
-            self.selected_events.clear()
-            self.selected_events_mapping.clear()
             self.selected_events.add(id(self.hovered_event))
             self.selected_events_mapping[id(self.hovered_event)] = self.hovered_event
             self.edit_event.emit(self.hovered_event)
             self.moving_flag = True
-            self.moving_offset = self.hovered_event[0] - (event.x() - 100) / self.sec_width
+            self.moving_offset = self.hovered_event[0] - (event.position().x() - 100) / self.sec_width
             self.update()
             return
-        self.selected_events.clear()
-        self.selected_events_mapping.clear()
+        
+        self.edit_event.emit(None)
         self.update()
 
     def mouseReleaseEvent(self, event):

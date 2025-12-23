@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QProgressBar
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QProgressBar
+from PyQt6.QtCore import QThread, pyqtSignal
 
 # before importing manim, we have to kill its logger than tqdm because otherwise the program crashes when trying to render scenes
 import logging

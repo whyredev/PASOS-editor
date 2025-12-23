@@ -1,7 +1,6 @@
 import pygame
 import numpy as np
-from PyQt5 import QtWidgets
-import manim
+from PyQt6 import QtWidgets
 
 def run_preview_window(scene):
     pygame.init()

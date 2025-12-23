@@ -1,10 +1,10 @@
 import os
 import json
 import math
-from PyQt5.QtWidgets import (QMainWindow, QWidget, QFileDialog, QMessageBox, QHBoxLayout, QVBoxLayout, QGridLayout,
+from PyQt6.QtWidgets import (QMainWindow, QWidget, QFileDialog, QMessageBox, QHBoxLayout, QVBoxLayout, QGridLayout,
                              QGroupBox, QScrollArea, QLabel, QLineEdit, QSlider, QPushButton, QStyle, QSizePolicy)
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt
+from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import Qt
 from .export import ExportDialog
 from .timeline_editor import TimeLineCanvas
 from .event_editor import EventEditor
@@ -12,22 +12,22 @@ from .event_editor import EventEditor
 def create_menubar(window, menubar):
     file_menu = menubar.addMenu("File")
     file_menu_action = file_menu.addAction("New")
-    file_menu_action.setIcon(window.style().standardIcon(QStyle.SP_FileIcon))
+    file_menu_action.setIcon(window.style().standardIcon(QStyle.StandardPixmap.SP_FileIcon))
     file_menu_action.setShortcut("Ctrl+N")
     file_menu_action.triggered.connect(lambda: window.unsaved_changes_message(window.new_file))
     file_menu_action = file_menu.addAction("Open")
-    file_menu_action.setIcon(window.style().standardIcon(QStyle.SP_DialogOpenButton))
+    file_menu_action.setIcon(window.style().standardIcon(QStyle.StandardPixmap.SP_DialogOpenButton))
     file_menu_action.setShortcut("Ctrl+O")
     file_menu_action.triggered.connect(lambda: window.unsaved_changes_message(window.open_file))
     file_menu_action = file_menu.addAction("Save")
-    file_menu_action.setIcon(window.style().standardIcon(QStyle.SP_DialogSaveButton))
+    file_menu_action.setIcon(window.style().standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton))
     file_menu_action.setShortcut("Ctrl+S")
     file_menu_action.triggered.connect(window.save_file)
     file_menu_action = file_menu.addAction("Save As...")
     file_menu_action.setShortcut("Ctrl+Alt+S")
     file_menu_action.triggered.connect(window.save_file_as)
     file_menu_action = file_menu.addAction("Export")
-    file_menu_action.setIcon(window.style().standardIcon(QStyle.SP_DriveNetIcon))
+    file_menu_action.setIcon(window.style().standardIcon(QStyle.StandardPixmap.SP_DriveNetIcon))
     file_menu_action.setShortcut("Ctrl+E")
     file_menu_action.triggered.connect(window.export_scene)
 
@@ -38,10 +38,10 @@ def create_time_edit(window, layout1):
 
 def create_duration_edit(window, layout2):
     duration_label = QLabel("Duration (seconds):")
-    duration_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-    duration_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+    duration_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+    duration_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
     window.duration_edit = QLineEdit(text=str(window.scene.duration))
-    window.duration_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+    window.duration_edit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
     window.duration_edit.setMinimumWidth(0)
     window.duration_edit.textChanged.connect(window.duration_changed)
     layout2.addWidget(duration_label)
@@ -49,30 +49,30 @@ def create_duration_edit(window, layout2):
 
 def create_media_buttons(window, layout2):
     mbtn_back = QPushButton()
-    mbtn_back.setIcon(window.style().standardIcon(QStyle.SP_MediaSeekBackward))
+    mbtn_back.setIcon(window.style().standardIcon(QStyle.StandardPixmap.SP_MediaSeekBackward))
     mbtn_back.clicked.connect(lambda: window.set_time_to(max(window.scene.edtv["time"] - window.scene.edtv["scroll_speed"], 0)))
     window.mbtn_play = QPushButton()
-    window.mbtn_play.setIcon(window.style().standardIcon(QStyle.SP_MediaPlay))
+    window.mbtn_play.setIcon(window.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
     window.mbtn_play.clicked.connect(window.playing_toggle)
     mbtn_forward = QPushButton()
-    mbtn_forward.setIcon(window.style().standardIcon(QStyle.SP_MediaSeekForward))
+    mbtn_forward.setIcon(window.style().standardIcon(QStyle.StandardPixmap.SP_MediaSeekForward))
     mbtn_forward.clicked.connect(lambda: window.set_time_to(min(window.scene.edtv["time"] + window.scene.edtv["scroll_speed"], window.scene.duration)))
     layout2.addWidget(mbtn_back)
     layout2.addWidget(window.mbtn_play)
     layout2.addWidget(mbtn_forward)
 
     playing_speed_label = QLabel("Playing speed:")
-    playing_speed_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-    playing_speed_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+    playing_speed_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+    playing_speed_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
     playing_speed_edit = QLineEdit(text=str(window.scene.edtv["playing_speed"]))
-    playing_speed_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+    playing_speed_edit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
     playing_speed_edit.setMinimumWidth(0)
     playing_speed_edit.textChanged.connect(lambda x: window.float_var_el_changed("playing_speed", x))
     scroll_speed_label = QLabel("Scroll speed:")
-    scroll_speed_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-    scroll_speed_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+    scroll_speed_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+    scroll_speed_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
     scroll_speed_edit = QLineEdit(text=str(window.scene.edtv["scroll_speed"]))
-    scroll_speed_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+    scroll_speed_edit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
     scroll_speed_edit.setMinimumWidth(0)
     scroll_speed_edit.textChanged.connect(lambda x: window.float_var_el_changed("scroll_speed", x))
     layout2.addWidget(playing_speed_label)
@@ -82,8 +82,8 @@ def create_media_buttons(window, layout2):
 
 def create_time_displayer(window, layout2):
     window.time_displayer = QLabel("Time: 0.00s")
-    window.time_displayer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-    window.time_displayer.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+    window.time_displayer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+    window.time_displayer.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
     layout2.addWidget(window.time_displayer)
 
 def create_timeline_edit(window, layout1, layout3):
@@ -91,24 +91,24 @@ def create_timeline_edit(window, layout1, layout3):
     window.timeline_canvas = TimeLineCanvas(window.scene, window.timeline_edit)
     window.timeline_canvas.timeline_changed.connect(lambda: window.update_unsaved_changes_flag(True))
     window.timeline_edit.setWidget(window.timeline_canvas)
-    window.timeline_edit.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-    window.timeline_edit.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+    window.timeline_edit.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+    window.timeline_edit.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
     layout1.addWidget(window.timeline_edit)
     layout1.addLayout(layout3)
     
     secwidth_label = QLabel("Width of a second (pixels):")
-    secwidth_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-    secwidth_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+    secwidth_label.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+    secwidth_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
     secwidth_edit = QLineEdit(text=str(window.scene.edtv["timeline_sec_width"]))
-    secwidth_edit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+    secwidth_edit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
     secwidth_edit.setMinimumWidth(0)
     secwidth_edit.textChanged.connect(lambda x: window.float_var_el_changed("timeline_sec_width", x, "positive_int"))
     timeline_zoom_out = QPushButton("-")
-    timeline_zoom_out.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+    timeline_zoom_out.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
     timeline_zoom_out.setMinimumWidth(0)
     timeline_zoom_out.clicked.connect(lambda: window.set_float_var("timeline_sec_width", math.ceil(window.scene.edtv["timeline_sec_width"] / 1.25), secwidth_edit))
     timeline_zoom_in = QPushButton("+")
-    timeline_zoom_in.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+    timeline_zoom_in.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
     timeline_zoom_in.setMinimumWidth(0)
     timeline_zoom_in.clicked.connect(lambda: window.set_float_var("timeline_sec_width", int(window.scene.edtv["timeline_sec_width"] * 1.25), secwidth_edit))
     layout3.addWidget(secwidth_label)
@@ -133,6 +133,7 @@ def create_event_edit(window, layout1):
     window.event_editor_widget = EventEditor()
     window.event_editor_widget.open_event(None)
     window.timeline_canvas.edit_event.connect(window.event_editor_widget.open_event)
+    window.timeline_canvas.timeline_changed.connect(window.event_editor_widget.update_event_variables)
     temp = QVBoxLayout()
     temp.addWidget(window.event_editor_widget)
     event_editor_box.setLayout(temp)
@@ -302,10 +303,10 @@ class EditorWindow(QMainWindow):
     def playing_toggle(self):
         if self.scene.edtv["playing"]:
             self.scene.edtv["playing"] = False
-            self.mbtn_play.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+            self.mbtn_play.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
         else:
             self.scene.edtv["playing"] = True
-            self.mbtn_play.setIcon(self.style().standardIcon(QStyle.SP_MediaStop))
+            self.mbtn_play.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaStop))
             self.scene.edtv["function_call"].append("start_playing")
 
     def closeEvent(self, event):
