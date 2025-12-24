@@ -239,14 +239,14 @@ class EditorWindow(QMainWindow):
         msg = QMessageBox()
         msg.setWindowTitle("Unsaved changes")
         msg.setText("Want to save your changes?")
-        msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
+        msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel)
 
         if self.unsaved_changes:
-            answer = msg.exec_()
+            answer = msg.exec()
             msg.raise_()
-            if answer == QMessageBox.Yes:
+            if answer == QMessageBox.StandardButton.Yes:
                 self.save_file()
-            if answer != QMessageBox.Cancel:
+            if answer != QMessageBox.StandardButton.Cancel:
                 action()
             return answer
         else:
@@ -311,5 +311,5 @@ class EditorWindow(QMainWindow):
 
     def closeEvent(self, event):
         answer = self.unsaved_changes_message(lambda: self.scene.edtv["function_call"].append("quit"))
-        if answer == QMessageBox.Cancel:
+        if answer == QMessageBox.StandardButton.Cancel:
             event.ignore()
