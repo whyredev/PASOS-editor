@@ -37,6 +37,7 @@ There is currently no compiled build of the PASOS Editor, but you can try it by 
 
 ### Requirements
 - Python
+- PyQt6
 - Manim (Community Edition)
 - Pygame
 
