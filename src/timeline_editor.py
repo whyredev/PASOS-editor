@@ -107,8 +107,8 @@ class TimeLineCanvas(QWidget):
                 painter.drawRect(rect)
                 painter.drawText(
                     QRect(rect.x() + 5, row_idx * self.row_height, rect.width() - 10, self.row_height),
-                    Qt.AlignLeft | Qt.AlignVCenter,
-                    QFontMetrics(font).elidedText(p_event[3], Qt.ElideRight, 90)
+                    Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
+                    QFontMetrics(font).elidedText(p_event[3], Qt.TextElideMode.ElideRight, 90)
                     )
         
         # draw cursor
@@ -139,7 +139,7 @@ class TimeLineCanvas(QWidget):
                 self.timeline_changed.emit()
                 self.update()
 
-        if self.hovered_row_idx != (new_row_idx := event.position().y() // self.row_height):
+        if self.hovered_row_idx != (new_row_idx := int(event.position().y() / self.row_height)):
             self.hovered_row_idx = new_row_idx
             self.hovered_row = None
             self.hovered_event = None
@@ -159,7 +159,7 @@ class TimeLineCanvas(QWidget):
         e_start = self.hovered_event[0]
         e_end = e_start + self.hovered_event[1]
         if mouse_time < e_start + 10/self.sec_width:
-            self.setCursor(Qt.SizeHorCursor)
+            self.setCursor(Qt.CursorShape.SizeHorCursor)
             self.resizing_side = "left"
             if self.hovered_event_idx > 0:
                 previous_event = self.hovered_row[self.hovered_event_idx - 1]
@@ -169,7 +169,7 @@ class TimeLineCanvas(QWidget):
             self.right_barrier = e_end
             self.resizing_end = e_end
         if mouse_time > e_end - 10/self.sec_width:
-            self.setCursor(Qt.SizeHorCursor)
+            self.setCursor(Qt.CursorShape.SizeHorCursor)
             self.resizing_side = "right"
             self.left_barrier = e_start
             self.right_barrier = self.hovered_row[self.hovered_event_idx + 1][0] if self.hovered_event_idx < len(self.hovered_row) - 1 else self.scene.duration
