@@ -45,7 +45,7 @@ def run_preview_window(scene):
             editor_window.set_time_to(play_time_start + (pygame.time.get_ticks() - play_tick_start)/1000 * scene.edtv["playing_speed"])
             if scene.edtv["time"] > scene.duration:
                 editor_window.set_time_to(scene.duration)
-                editor_window.mbtn_play.setIcon(editor_window.style().standardIcon(QtWidgets.QStyle.SP_MediaPlay))
+                editor_window.mbtn_play.setIcon(editor_window.style().standardIcon(QtWidgets.QStyle.StandardPixmap.SP_MediaPlay))
                 scene.edtv["playing"] = False
 
         scene.update_mobs()
