@@ -130,7 +130,7 @@ def create_event_edit(window, layout1):
         padding: 0 4px;
         }
     """)
-    window.event_editor_widget = EventEditor()
+    window.event_editor_widget = EventEditor(window.scene)
     window.event_editor_widget.open_event(None)
     window.timeline_canvas.edit_event.connect(window.event_editor_widget.open_event)
     window.timeline_canvas.timeline_changed.connect(window.event_editor_widget.update_event_variables)
@@ -233,7 +233,7 @@ class EditorWindow(QMainWindow):
         movie_path, _ = QFileDialog.getSaveFileName(self, caption="Export As", directory="", filter="MPEG4 (*.mp4);; MOV (*.mov);; GIF (*.gif)")
         if movie_path == "":
             return
-        ExportDialog(self.scene, movie_path).exec_()
+        ExportDialog(self.scene, movie_path).exec()
     
     def unsaved_changes_message(self, action):
         msg = QMessageBox()
