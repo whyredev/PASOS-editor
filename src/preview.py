@@ -13,7 +13,8 @@ def run_preview_window(scene):
     play_tick_start = 0 # pygame time when playing starts
     play_time_start = 0 # scene time when playing starts
     editor_window = None # the EditorWindow is stored in this variable
-        
+    F_array = lambda: np.swapaxes(scene.renderer.get_frame()[:, :, :3], 0, 1)
+    surf = pygame.surfarray.make_surface(F_array())
     running = True
     while running:
         for event in pygame.event.get():
@@ -50,9 +51,8 @@ def run_preview_window(scene):
 
         scene.update_mobs()
         scene.renderer.update_frame(scene)
-        frame = scene.renderer.get_frame()
-        surf = pygame.transform.flip(pygame.transform.scale(pygame.surfarray.make_surface(np.rot90(frame[:, :, :3], -1)), window_resolution), False, True)
-        window.blit(surf, (0, 0))
+        pygame.surfarray.blit_array(surf, F_array())
+        window.blit(pygame.transform.scale(surf, window_resolution), (0, 0))
         pygame.display.flip()
 
     pygame.quit()
