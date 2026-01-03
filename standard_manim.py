@@ -1,9 +1,7 @@
 from manim import *
 
 class Logo(Scene):
-    def construct(self):
-        preferences = {"dark_theme": True, "icon_form": True}
-
+    def construct(self, dark_theme: bool = True, icon_form: bool = True):
         manim_logo = ManimBanner()
         
         single_event_clip = RoundedRectangle(width=manim_logo[0].get_width(), height=0.9, stroke_width=8, fill_opacity=1, corner_radius=0.1)
@@ -15,12 +13,12 @@ class Logo(Scene):
         for mob in event_clips:
             mob.set_stroke_color(mob.get_color().darker(0.5))
         
-        text_color = LOGO_WHITE if preferences["dark_theme"] else LOGO_BLACK
-        mathbb_P = MathTex("\mathbb{P}", color=text_color).scale(7).next_to(manim_logo[1].get_corner(LEFT), RIGHT, buff=0)
-        mathbb_ASOS = MathTex("\mathbb{ASOS}", color=text_color).scale(1.75).next_to(manim_logo[1].get_corner(DR) + UP * 0.25, UL, buff=0)
+        text_color = LOGO_WHITE if dark_theme else LOGO_BLACK
+        mathbb_P = MathTex("\\mathbb{P}", color=text_color).scale(7).next_to(manim_logo[1].get_corner(LEFT), RIGHT, buff=0)
+        mathbb_ASOS = MathTex("\\mathbb{ASOS}", color=text_color).scale(1.75).next_to(manim_logo[1].get_corner(DR) + UP * 0.25, UL, buff=0)
         
         pasos_logo = VGroup(event_clips, mathbb_P, mathbb_ASOS)
-        if preferences["icon_form"]:
+        if icon_form:
             event_clips.move_to(ORIGIN)
             VGroup(mathbb_P, mathbb_ASOS).move_to(ORIGIN)
 
@@ -30,10 +28,8 @@ class Logo(Scene):
 
 class Testing(Scene):
     def construct(self):
-        line1 = DashedLine(start=3 * LEFT, end=3 * RIGHT)
-        line1.rotate(angle=31 * DEGREES, about_point=ORIGIN)
-        line2 = DashedLine(start=3 * UP, end=3 * DOWN)
-        line2.rotate(angle=12 * DEGREES, about_point=ORIGIN)
+        mt = MathTex('e^x = \\sum_{n=0}^{\\infty} \\frac{x^n}{n!}')
+        self.add(mt)
 
-        arc = TangentialArc(line1, line2, radius=2.25, corner=(1, 1), color=TEAL)
-        self.add(arc, line1, line2)
+A = Logo()
+A.render(True)
