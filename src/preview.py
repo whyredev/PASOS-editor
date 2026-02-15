@@ -8,8 +8,10 @@ def run_preview_window(scene):
     window_resolution = (853, 480)
     window = pygame.display.set_mode(window_resolution)
     pygame.display.set_caption("Preview")
-    pygame.display.set_icon(pygame.image.load("icon_light.png"))
-
+    try:
+        pygame.display.set_icon(pygame.image.load("icon_light.png"))
+    except:
+        pass
     play_tick_start = 0 # pygame time when playing starts
     play_time_start = 0 # scene time when playing starts
     editor_window = None # the EditorWindow is stored in this variable
