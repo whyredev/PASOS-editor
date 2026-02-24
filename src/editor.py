@@ -10,7 +10,7 @@ from .export import ExportDialog
 from .timeline_editor import TimeLineCanvas
 from .event_editor import EventEditor
 
-KRPATH = Path(__file__).resolve().parent[1]
+KRPATH = str(Path(__file__).resolve().parent.parent) + "/"
 
 def create_menubar(window, menubar):
     file_menu = menubar.addMenu("File")

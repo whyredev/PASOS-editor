@@ -3,7 +3,7 @@ import pygame
 import numpy as np
 from PyQt6 import QtWidgets
 
-KRPATH = Path(__file__).resolve().parent[1]
+KRPATH = str(Path(__file__).resolve().parent.parent) + "/"
 
 def run_preview_window(scene):
     pygame.init()
