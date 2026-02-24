@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import json
 import math
 from PyQt6.QtWidgets import (QMainWindow, QWidget, QFileDialog, QMessageBox, QHBoxLayout, QVBoxLayout, QGridLayout,
@@ -8,6 +9,8 @@ from PyQt6.QtCore import Qt
 from .export import ExportDialog
 from .timeline_editor import TimeLineCanvas
 from .event_editor import EventEditor
+
+KRPATH = Path(__file__).resolve().parent[1]
 
 def create_menubar(window, menubar):
     file_menu = menubar.addMenu("File")
@@ -159,7 +162,7 @@ class EditorWindow(QMainWindow):
         self.scene.edtv["function_call"].append(self)
         self.scene.edtv["function_call"].append("update_pygame_editor_window_variable")
         self.update_unsaved_changes_flag(False)
-        self.setWindowIcon(QIcon("icon_light.png"))
+        self.setWindowIcon(QIcon(KRPATH+"icon_light.png"))
         self.resize(640, 480)
         central_widget = QWidget()
         self.setCentralWidget(central_widget)

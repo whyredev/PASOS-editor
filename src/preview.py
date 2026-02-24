@@ -1,6 +1,9 @@
+from pathlib import Path
 import pygame
 import numpy as np
 from PyQt6 import QtWidgets
+
+KRPATH = Path(__file__).resolve().parent[1]
 
 def run_preview_window(scene):
     pygame.init()
@@ -9,7 +12,7 @@ def run_preview_window(scene):
     window = pygame.display.set_mode(window_resolution)
     pygame.display.set_caption("Preview")
     try:
-        pygame.display.set_icon(pygame.image.load("icon_light.png"))
+        pygame.display.set_icon(pygame.image.load(KRPATH+"icon_light.png"))
     except:
         pass
     play_tick_start = 0 # pygame time when playing starts
