@@ -1,6 +1,9 @@
+from pathlib import Path
 import json
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QFrame, QLabel, QLineEdit, QComboBox, QSizePolicy
 from . import utils
+
+KRPATH = str(Path(__file__).resolve().parent.parent) + "/"
 
 manim_rate_functions = [
     "linear", "smooth", "smoothstep", "rush_into",
@@ -17,7 +20,7 @@ manim_rate_functions = [
 ]
 
 sprite_classes = {}
-with open("src/data/default_sprite_classes.json", "r") as f:
+with open(KRPATH+"src/data/default_sprite_classes.json", "r") as f:
     sprite_classes.update(json.load(f))
 
 class QHSeparationLine(QFrame):
@@ -32,8 +35,9 @@ class QHSeparationLine(QFrame):
 class EventEditor(QWidget):
     cur_event = None
 
-    def __init__(self):
+    def __init__(self, scene):
         super().__init__()
+        self.scene = scene
         layout1 = QVBoxLayout()
         layout2 = QHBoxLayout()
         self.setLayout(layout1)
@@ -43,7 +47,9 @@ class EventEditor(QWidget):
 
         start_label = QLabel("Start:")
         self.start_edit = QLineEdit()
-        self.start_edit.textChanged.connect(lambda txt: self.change_event_value(0, txt))
+        self.start_edit.textChanged.connect(self.change_event_value_signal(
+            0, lambda t: float(t), lambda x: 0 < x < scene.duration - self.cur_event[1]
+            ))
         duration_label = QLabel("Duration:")
         self.duration_edit = QLineEdit()
         easing_label = QLabel("Easing:")
@@ -71,5 +77,13 @@ class EventEditor(QWidget):
             self.duration_edit.setText(str(self.cur_event[1]))
             self.easing_edit.setCurrentText(str(self.cur_event[2]))
     
-    def change_event_value(self):
-        pass
+    def change_event_value_signal(self, index: int, conversion, condition):
+        def signal(value):
+            try:
+                new_value = conversion(value)
+                if condition(new_value):
+                    self.cur_event[index] = new_value
+            except Exception as Exc:
+                print(Exc)
+        return signal
+
