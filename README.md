@@ -31,15 +31,19 @@ Each timeline is a list of events defined by:
 ### Example
 An event that moves a mobject from `ORIGIN` to `RIGHT * 2` starting at `t = 2s` and ending at `t = 3.5s` is interpreted as `[2, 1.5, "smooth", "L: [2, 0, 0]"]` (here, `L: ` means it's a linear interpolation).
 
-## Usage
-
-There is currently no compiled build of the PASOS Editor, but you can try it by [downloading the main branch](https://github.com/whyredev/PASOS-editor/archive/refs/heads/main.zip) and running `main.pyw`.
-
-### Requirements
+## Requirements
 - Python
 - PyQt6
 - Manim (Community Edition)
 - Pygame
+
+## Usage
+
+This program is written entirely in Python and is distributed as source code.
+
+To use the PASOS Editor, you must install the dependencies, clone one of the stable versions (avaliable in the Tags section of this repository) and run it locally using `main.pyw`.
+
+> Currently there are no stable versions.
 
 ## History
 
