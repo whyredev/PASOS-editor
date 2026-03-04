@@ -17,7 +17,7 @@ def qcolor_interpolation(color1: QColor, color2: QColor, alpha: float) -> QColor
     return QColor(new_r, new_g, new_b, new_a)
 
 class TimeLineCanvas(QWidget):
-    edit_event = pyqtSignal(object)
+    edit_event = pyqtSignal(object, int, int)
     timeline_changed = pyqtSignal()
     sec_width = 60 # width of a second
     row_height = 20
@@ -178,19 +178,19 @@ class TimeLineCanvas(QWidget):
         if self.resizing_side:
             self.resizing_flag = True
             return
-        
+
         self.selected_events.clear()
         self.selected_events_mapping.clear()
         if self.hovered_event:
             self.selected_events.add(id(self.hovered_event))
             self.selected_events_mapping[id(self.hovered_event)] = self.hovered_event
-            self.edit_event.emit(self.hovered_event)
+            self.edit_event.emit(self.hovered_event, self.hovered_event_idx, self.hovered_row)
             self.moving_flag = True
             self.moving_offset = self.hovered_event[0] - (event.position().x() - 100) / self.sec_width
             self.update()
             return
         
-        self.edit_event.emit(None)
+        self.edit_event.emit(None, 0, 0)
         self.update()
 
     def mouseReleaseEvent(self, event):
