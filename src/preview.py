@@ -70,8 +70,7 @@ def pygame_loop(V):
         editor_window.set_time_to(V.play_time_start + (pygame.time.get_ticks() - V.play_tick_start)/1000 * SCENE.edtv["playing_speed"])
         if SCENE.edtv["time"] > SCENE.duration:
             editor_window.set_time_to(SCENE.duration)
-            editor_window.mbtn_play.setIcon(editor_window.style().standardIcon(QtWidgets.QStyle.StandardPixmap.SP_MediaPlay))
-            SCENE.edtv["playing"] = False
+            editor_window.playing_toggle()
 
     SCENE.update_mobs()
     SCENE.renderer.update_frame(SCENE)
