@@ -34,6 +34,12 @@ def create_menubar(window, menubar):
     file_menu_action.setShortcut("Ctrl+E")
     file_menu_action.triggered.connect(window.export_scene)
 
+    preview_menu = menubar.addMenu("Preview")
+    window.preview_menu_action = preview_menu.addAction("Visible")
+    window.preview_menu_action.setCheckable(True)
+    window.preview_menu_action.setChecked(True)
+    window.preview_menu_action.triggered.connect(lambda checked: window.call_edtv_func(checked, "set_preview_visibility"))
+
 def create_time_edit(window, layout1):
     window.time_edit = QSlider(Qt.Orientation.Horizontal)
     window.time_edit.valueChanged.connect(window.time_slider_moved)
@@ -159,8 +165,6 @@ class EditorWindow(QMainWindow):
         # function_call is a list made to pass signals between pygame and pyqt. for example, when pyqt is closed, it appends "quit" to function_call (line 400), then pygame reads that (line 178) and stops running
 
         self.scene.edtv["editor_window_object"] = self
-        self.scene.edtv["function_call"].append(self)
-        self.scene.edtv["function_call"].append("update_pygame_editor_window_variable")
         self.update_unsaved_changes_flag(False)
         self.setWindowIcon(QIcon(KRPATH+"icon_light.png"))
         self.resize(640, 480)
@@ -311,6 +315,9 @@ class EditorWindow(QMainWindow):
             self.scene.edtv["playing"] = True
             self.mbtn_play.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaStop))
             self.scene.edtv["function_call"].append("start_playing")
+
+    def call_edtv_func(self, *args):
+        self.scene.edtv["function_call"].extend(args)
 
     def closeEvent(self, event):
         answer = self.unsaved_changes_message(lambda: self.scene.edtv["function_call"].append("quit"))

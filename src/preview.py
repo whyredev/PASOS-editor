@@ -4,60 +4,77 @@ import numpy as np
 from PyQt6 import QtWidgets
 
 KRPATH = str(Path(__file__).resolve().parent.parent) + "/"
+SCENE = None # PASOS scene
+F_array = lambda: np.swapaxes(SCENE.renderer.get_frame()[:, :, :3], 0, 1)
 
-def run_preview_window(scene):
-    pygame.init()
-    #manim_resolution = (128/9, 8)
-    window_resolution = (853, 480)
-    window = pygame.display.set_mode(window_resolution)
-    pygame.display.set_caption("Preview")
-    try:
-        pygame.display.set_icon(pygame.image.load(KRPATH+"icon_light.png"))
-    except:
-        pass
-    play_tick_start = 0 # pygame time when playing starts
-    play_time_start = 0 # scene time when playing starts
-    editor_window = None # the EditorWindow is stored in this variable
-    F_array = lambda: np.swapaxes(scene.renderer.get_frame()[:, :, :3], 0, 1)
-    surf = pygame.surfarray.make_surface(F_array())
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-                break
-            #if event.type == pygame.MOUSEBUTTONDOWN:
-            #    dragging = True
-            #if event.type == pygame.MOUSEBUTTONUP:
-            #    dragging = False
+class PreviewState:
+    def __init__(self):
+        self.running = True
+        self.visible_window = True
+        self.window_resolution = (853, 480) #manim_resolution = (128/9, 8)
+        self.window = None
+        self.surf = pygame.surfarray.make_surface(F_array())
+        self.play_tick_start = 0 # pygame time when playing starts
+        self.play_time_start = 0 # scene time when playing starts
 
-        if scene.edtv["function_call"]: # shared functions
-            if scene.edtv["function_call"][-1] == "update_pygame_editor_window_variable":
-                editor_window = scene.edtv["function_call"][-2]
-                editor_window.raise_()
-                scene.edtv["function_call"].pop(-1)
-                scene.edtv["function_call"].pop(-1)
+def run_preview(scene):
+    global SCENE
+    SCENE = scene
+    V = PreviewState()
 
-            elif scene.edtv["function_call"][-1] == "start_playing":
-                play_tick_start = pygame.time.get_ticks()
-                play_time_start = scene.edtv["time"]
-                scene.edtv["function_call"].pop(-1)
-            
-            elif scene.edtv["function_call"][-1] == "quit":
-                running = False
-                break
+    while V.running:
+        pygame.init() 
+        V.window = pygame.display.set_mode(V.window_resolution)
+        pygame.display.set_caption("Preview")
+        try:
+            pygame.display.set_icon(pygame.image.load(KRPATH+"icon_light.png"))
+        except:
+            pass
 
-        if scene.edtv["playing"]:
-            editor_window.set_time_to(play_time_start + (pygame.time.get_ticks() - play_tick_start)/1000 * scene.edtv["playing_speed"])
-            if scene.edtv["time"] > scene.duration:
-                editor_window.set_time_to(scene.duration)
-                editor_window.mbtn_play.setIcon(editor_window.style().standardIcon(QtWidgets.QStyle.StandardPixmap.SP_MediaPlay))
-                scene.edtv["playing"] = False
+        while V.running and V.visible_window:
+            function_calls(V)
+            pygame_loop(V)
+        pygame.quit()
+        while V.running and not V.visible_window:
+            function_calls(V)
 
-        scene.update_mobs()
-        scene.renderer.update_frame(scene)
-        pygame.surfarray.blit_array(surf, F_array())
-        window.blit(pygame.transform.scale(surf, window_resolution), (0, 0))
-        pygame.display.flip()
+def function_calls(V):
+    if SCENE.edtv["function_call"]: # shared functions
+        if SCENE.edtv["function_call"][-1] == "set_preview_visibility":
+            V.visible_window = SCENE.edtv["function_call"][-2]
+            SCENE.edtv["function_call"].pop(-1)
+            SCENE.edtv["function_call"].pop(-1)
 
-    pygame.quit()
+        elif SCENE.edtv["function_call"][-1] == "quit":
+            V.running = False
+            SCENE.edtv["function_call"].pop(-1)
+
+def pygame_loop(V):
+    editor_window = SCENE.edtv["editor_window_object"]
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            V.visible_window = False
+            editor_window.preview_menu_action.setChecked(False)
+        #if event.type == pygame.MOUSEBUTTONDOWN:
+        #    dragging = True
+        #if event.type == pygame.MOUSEBUTTONUP:
+        #    dragging = False
+
+    if SCENE.edtv["function_call"] and SCENE.edtv["function_call"][-1] == "start_playing":
+        V.play_tick_start = pygame.time.get_ticks()
+        V.play_time_start = SCENE.edtv["time"]
+        SCENE.edtv["function_call"].pop(-1)
+
+    if SCENE.edtv["playing"]:
+        editor_window.set_time_to(V.play_time_start + (pygame.time.get_ticks() - V.play_tick_start)/1000 * SCENE.edtv["playing_speed"])
+        if SCENE.edtv["time"] > SCENE.duration:
+            editor_window.set_time_to(SCENE.duration)
+            editor_window.mbtn_play.setIcon(editor_window.style().standardIcon(QtWidgets.QStyle.StandardPixmap.SP_MediaPlay))
+            SCENE.edtv["playing"] = False
+
+    SCENE.update_mobs()
+    SCENE.renderer.update_frame(SCENE)
+    pygame.surfarray.blit_array(V.surf, F_array())
+    V.window.blit(pygame.transform.scale(V.surf, V.window_resolution), (0, 0))
+    pygame.display.flip()
