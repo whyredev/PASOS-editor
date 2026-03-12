@@ -21,6 +21,7 @@ def run_preview(scene):
     global SCENE
     SCENE = scene
     V = PreviewState()
+    editor_window = SCENE.edtv["editor_window_object"]
 
     while V.running:
         pygame.init() 
@@ -30,11 +31,17 @@ def run_preview(scene):
             pygame.display.set_icon(pygame.image.load(KRPATH+"icon_light.png"))
         except:
             pass
+        editor_window.mbtn_play.setEnabled(True)
 
         while V.running and V.visible_window:
             function_calls(V)
             pygame_loop(V)
+
         pygame.quit()
+        editor_window.mbtn_play.setEnabled(False)
+        if SCENE.edtv["playing"]:
+            editor_window.playing_toggle()
+
         while V.running and not V.visible_window:
             function_calls(V)
 
